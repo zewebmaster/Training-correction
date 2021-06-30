@@ -1,0 +1,11 @@
+services:
+
+  #####################
+  # TP SERVICE
+  #####################
+
+  training_correction.export_service:
+    class: Drupal\training_correction\Service\TpService\ExportService
+    arguments: ['@entity_type.manager']
+    tags:
+

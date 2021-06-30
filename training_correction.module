@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function training_correction_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.training_correction':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module provides the correction of the training exercises.') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<p>' . t('Just install.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * TP Hook niveau 1. 
+ *
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function training_correction_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if ($form_id === 'node_pokemon_form' || $form_id === 'node_pokemon_edit_form') {
+    
+    // To disable the input field.
+    // Several ways to do this in relation to the different levels of configuration.
+    // - The field.
+    // - The widget.
+    // - The input.
+    // - The input - with an attribute.
+    // $form['field_id']['#disabled'] = TRUE;
+    // $form['field_id']['widget']['#disabled'] = TRUE;
+    // $form['field_id']['widget'][0]['#disabled'] = TRUE;
+    // $form['field_id']['widget'][0]['value']['#disabled'] = TRUE;
+    // $form['field_id']['widget'][0]['value']['#attributes']['disabled'] = TRUE;
+
+    // Set the custom validation function callback function.
+    // $form['#validate'][] = '_check_pockedex_id';
+  }
+}
+
+/**
+ * Pokemon node form custom validation callback function.
+ * Checks if the pockedex id is unique.
+ */
+function _check_pockedex_id(&$form, FormStateInterface $form_state) {
+  // Get the Pockedex id
+  $pockedex_id = $form_state->getValue('field_id');
+  $pockedex_id = \reset($pockedex_id);
+  // Get the the Pokemon entity that is being edited.
+  $pokemon_form = $form_state->getFormObject();
+  $pokemon = $pokemon_form->getEntity();
+
+  // Looking for a pokemon with the same pockedex id.
+  $query = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->getQuery()
+    ->condition('field_id', $pockedex_id['value']);
+  // Exclude the Pokemon entity that is being edited.
+  if (!$pokemon->isNew()) {
+    $query->condition('nid', $pokemon->id(), '!=');
+  }
+  $count = $query->count()->execute();
+
+  if ($count != 0) {
+    $form_state->setErrorByName('field_id', t('This id is already registred.'));
+  }
+}
+
+/**
+ * TP Hook niveau 2. 
+ *
+ * Implements hook_entity_view_display_alter().
+ */
+function training_correction_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if (\Drupal::currentUser()->isAnonymous()) {
+    if ($context['bundle'] == 'article' && $context['view_mode'] == 'full') {
+      // You can refer to the yml configuration files.
+      // core.entity_view_display.node.article.default.yml
+      $options = [
+        "type" => "text_trimmed",
+        "weight" => 0,
+        "region" => "content",
+        "settings" => [
+          "trim_length" => 200,
+        ],
+        "third_party_settings" => [],
+        "label" => "hidden",
+      ];
+      $display->setComponent('body', $options);
+    }
+  }  
+}
+
+/**
+ * TP Hook niveau 3. 
+ * 
+ * Implements hook_file_download().
+ */
+function training_correction_file_download($uri) {
+  // $uri = 'private://documentation/index.html'.
+  if (\in_array('documentation', \explode('/', $uri))) {
+    if (\in_array('administrator', \Drupal::currentUser()->getRoles())) {
+      return [
+        'Content-Type: text/html; charset=utf-8',
+      ];
+    }
+  }
+  return -1;
+}
+
+/**
+ * TP Hook niveau 3. 
+ *
+ * Implements hook_toolbar().
+ */
+function training_correction_toolbar() {
+  // Add documentation `tab` in toolbar.
+  $items['documentation'] = [
+    '#type' => 'toolbar_item',
+    'tab' => [
+      '#type' => 'link',
+      '#title' => t('Documentation'),
+      '#url' => Url::fromRoute('<none>'),
+      '#options' => [
+        'attributes' => [
+          'title' => t('Documentation'),
+          'class' => ['toolbar-icon', 'toolbar-icon-help', 'toolbar-item', 'trigger'],
+        ],
+      ],
+    ],
+    '#weight' => 500,
+  ];
+
+  // Create an item-list renderable array.
+  $links = [
+    '#theme' => 'item_list',
+    '#list-type' => 'ul',
+    '#attributes' => [
+      'class' => 'toolbar-menu',
+    ],
+    '#wrapper_attributes' => [
+      'class' => 'container',
+    ],
+    '#items' => [],
+  ];
+
+  // Add links to the item-list.
+  $links['#items']['documentation'] = [
+    '#wrapper_attributes' => [
+      'class' => 'menu-item',
+    ],
+    '#type' => 'link',
+    '#title' => t('Documentation'),
+    '#url' => Url::fromUri(file_create_url('private://documentation/index.html')),
+    '#options' => [
+      'attributes' => [
+        'title' => t('Documentation'),
+        'target' => '_blank',
+      ],
+    ],
+  ];
+  $links['#items']['api'] = [
+    '#wrapper_attributes' => ['class' => 'menu-item'],
+    '#type' => 'link',
+    '#title' => t('API Drupal'),
+    '#url' => Url::fromUri('https://api.drupal.org/api/drupal'),
+    '#options' => [
+      'attributes' => [
+        'title' => t('Documentation'),
+        'target' => '_blank',
+      ],
+    ],
+  ];
+
+  // Add item-list renderable array into the documentation `tab` tray.
+  $items['documentation']['tray'] = [
+    '#type' => 'container',
+    'links' => $links,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function training_correction_theme($existing, $type, $theme, $path) {
+  $themes['block_socialnetwork'] = [
+    'template' => 'block/block-socialnetwork',
+    'variables' => [
+      'title' => NULL,
+      'items_list' => NULL,
+    ],
+  ];
+
+  return $themes;
+}

@@ -1,0 +1,17 @@
+#############
+# TP REQUEST
+#############
+
+# Level 1
+training_correction.stat_global_task:
+  title: 'Global statistics'
+  description: 'Get global statistics'
+  route_name: training_correction.stat_global
+  base_route: training_correction.stat_global
+
+# Level 2
+training_correction.stat_pokemon_task:
+  title: 'Pokemon statistics'
+  description: 'Get sport statistics'
+  route_name: training_correction.stat_pokemon
+  base_route: training_correction.stat_global

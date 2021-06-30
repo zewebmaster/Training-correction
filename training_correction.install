@@ -1,0 +1,26 @@
+<?php
+
+use Drupal\Core\File\FileSystemInterface;
+
+function training_correction_install() {
+  // Create directory for documentation.
+  $directory = 'private://documentation/';
+  if (!\file_exists($directory)) {
+    
+    \Drupal::service('file_system')->prepareDirectory($directory, 
+      FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS
+    );
+
+    $filepath = \sprintf('%s/index.html', $directory
+    );
+    $output = '<html><p>Put your doc here</p></html>';
+    \Drupal::service('file_system')->saveData($output, $filepath);
+  }
+}
+
+function training_correction_uninstall() {
+  $directory = 'private://documentation/';
+  if (\file_exists($directory)) {
+    \Drupal::service('file_system')->deleteRecursive($directory);
+  }
+}

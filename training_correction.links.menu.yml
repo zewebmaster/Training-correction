@@ -1,0 +1,63 @@
+################
+# TP CONTROLLER
+################
+
+training_correction.my_content:
+  menu_name: cockpit
+  title: 'Manage your content'
+  route_name: training_correction.my_content
+  weight: 1
+training_correction.api_pokemon:
+  menu_name: cockpit
+  title: 'Json api'
+  route_name: training_correction.api_pokemon
+  weight: 2
+training_correction.api_pokeapi:
+  menu_name: cockpit
+  title: 'Poke api'
+  route_name: training_correction.api_pokeapi
+  weight: 3
+training_correction.api_pokemon_with_cache:
+  menu_name: cockpit
+  title: 'Poke api with cache management'
+  route_name: training_correction.api_pokemon_with_cache
+  weight: 4
+
+##############
+# TP REQUÊTES
+##############
+
+# Level 1
+training_correction.stat_global:
+  title: 'Global statistics'
+  description: 'Get global statistics'
+  route_name: training_correction.stat_global
+  parent: system.admin_config_system
+
+################
+# TP FORMULAIRE
+################
+
+# Level 1
+training_correction.newsletters_form_extend:
+  menu_name: cockpit
+  title: 'Subscribe to the newsletter'
+  route_name: training_correction.newsletters_form_extend
+  weight: 5
+
+# Level 3
+training_correction.social_network_configuration:
+  title: 'Social network configuration'
+  description: 'Manage the configuration of your social network'
+  route_name: training_correction.social_network_configuration
+  parent: system.admin_config_system
+
+################
+# TP SERVICE
+################
+
+training_correction.export_pokemon:
+  menu_name: cockpit
+  title: 'Export Pokemon'
+  route_name: training_correction.export_pokemon_form
+  weight: 6

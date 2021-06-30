@@ -1,0 +1,123 @@
+################
+# TP CONTROLLER
+################
+
+# Level 1
+training_correction.my_content:
+  path: '/cockpit/my-content'
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpController\Lv1CockpitController::render
+    _title: 'Manage your content'
+  requirements:
+    _role: 'authenticated'
+
+# Level 2
+training_correction.api_pokemon:
+  path: '/api/1.0/pokemons'
+  methods:  [GET]
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpController\Lv2JsonResponseController::listAll
+  requirements:
+    _permission: 'access content'
+
+# Level 3
+training_correction.api_pokeapi:
+  path: '/api/pokeapi'
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpController\Lv3PokemonApiController::render
+  requirements:
+    _permission: 'access content'
+
+##############
+# TP REQUÊTES
+##############
+
+# Level 1
+training_correction.stat_global:
+  path: '/admin/config/system/statistics/main'
+  defaults:
+    _controller: '\Drupal\training_correction\Controller\TpQuery\Lv1GlobalStatistics::render'
+    _title: 'Global Statistics'
+  requirements:
+    _role: 'administrator'
+
+# Level 2
+training_correction.stat_pokemon:
+  path: '/admin/config/system/statistics/pokemon'
+  defaults:
+    _controller: '\Drupal\training_correction\Controller\TpQuery\Lv2PokemonStatistics::render'
+    _title: 'Pokemon Statistics'
+  requirements:
+    _role: 'administrator'
+
+################
+# TP FORMULAIRE
+################
+
+# Level 1
+training_correction.newsletters_form:
+  path: '/newsletters/subscribe'
+  defaults:
+    _form:  '\Drupal\training_correction\Form\TpForm\Lv1NewsletterSubscribeForm'
+    _title: 'Subscibe to the newsletter'
+  requirements:
+    _permission: 'access content'
+
+# Level 2
+training_correction.newsletters_form_extend:
+  path: '/newsletters/subscribe/extend'
+  defaults:
+    _form:  '\Drupal\training_correction\Form\TpForm\Lv2NewsletterSubscribeForm'
+    _title: 'Subscibe to the newsletter'
+  requirements:
+    _permission: 'access content'
+## controller - redirection using query parameters
+training_correction.newsletters_form_redirection:
+  path: '/newsletters/confirmation'
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpForm\FormRedirectionController::formRedirect
+    _title: 'Confirmation of your registration'
+  requirements:
+    _permission: 'access content'
+## controller - redirection using tempstore
+training_correction.newsletters_form_redirection_ts:
+  path: '/newsletters/confirmation-using-store'
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpForm\FormRedirectionController::formRedirectUsingTempStore
+    _title: 'Confirmation of your registration'
+  requirements:
+    _permission: 'access content'
+
+# Level 3
+training_correction.social_network_configuration:
+  path: '/admin/config/system/social-network-configuration'
+  defaults:
+    _form: '\Drupal\training_correction\Form\TpForm\Lv3SocialNetworkConfigurationForm'
+    _title: 'Social network configuration'
+  requirements:
+    _role: 'administrator'
+
+###########
+# TP CACHE
+###########
+
+# Level 2
+training_correction.api_pokemon_with_cache:
+  path: '/api/1.0/pokemons/types'
+  methods:  [GET]
+  defaults:
+    _controller: \Drupal\training_correction\Controller\TpCache\Lv2CacheableJsonResponseController::list
+  requirements:
+    _permission: 'access content'
+
+#############
+# TP SERVICE
+#############
+
+training_correction.export_pokemon_form:
+  path: '/export/pokemon'
+  defaults:
+    _form:  '\Drupal\training_correction\Form\TpService\ExportPokemonForm'
+    _title: 'Export Pokemon'
+  requirements:
+    _permission: 'access content'
