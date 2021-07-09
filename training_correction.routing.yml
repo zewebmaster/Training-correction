@@ -106,7 +106,7 @@ training_correction.api_pokemon_with_cache:
   path: '/api/1.0/pokemons/types'
   methods:  [GET]
   defaults:
-    _controller: \Drupal\training_correction\Controller\TpCache\Lv2CacheableJsonResponseController::list
+    _controller: \Drupal\training_correction\Controller\TpCache\Lv3CacheableJsonResponseController::list
   requirements:
     _permission: 'access content'
 

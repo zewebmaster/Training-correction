@@ -83,6 +83,7 @@ class Lv3SocialNetworkBlock extends BlockBase implements ContainerFactoryPluginI
     $social_network_config = $this->config->get('training_correction.settings');
     $items = [];
     foreach ($social_network_config->getRawData() as $label => $link) {
+      // Create link.
       $url = Url::fromUri($link);
       $items[] = $this->linkGenerator->generate($label, $url);
     }

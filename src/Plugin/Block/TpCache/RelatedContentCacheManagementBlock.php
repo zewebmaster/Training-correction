@@ -3,6 +3,7 @@
 namespace Drupal\training_correction\Plugin\Block\TpCache;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -111,11 +112,8 @@ class RelatedContentCacheManagementBlock extends BlockBase implements ContainerF
       ->getStorage('node')
       ->loadMultiple($nids);
 
-    // Manage cache for current node.
-    $node_tags[] = \sprintf('node:%u', $node->id());
     foreach ($articles as $article) {
-      // Manage cache tags.
-      $node_tags[] = \sprintf('node:%u', $article->id());
+      // Create link.
       $label = $article->getTitle();
       $url = Url::fromRoute('entity.node.canonical', ['node' => $article->id()]);
       $list[] = $this->linkGenerator->generate($label, $url);
@@ -124,13 +122,21 @@ class RelatedContentCacheManagementBlock extends BlockBase implements ContainerF
     return [
       '#theme' => 'item_list',
       '#items' => $list,
-      '#cache' => [
-        'tags' => $node_tags,
-        'contexts' => [
-          'url.path',
-        ],
-      ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    return Cache::mergeTags(parent::getCacheTags(), ['node_list:article']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    return Cache::mergeContexts(parent::getCacheContexts(), ['url.path']);
   }
 
 }

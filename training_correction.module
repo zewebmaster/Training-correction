@@ -91,17 +91,17 @@ function training_correction_entity_view_display_alter(EntityViewDisplayInterfac
       // core.entity_view_display.node.article.default.yml
       $options = [
         "type" => "text_trimmed",
-        "weight" => 0,
+        "weight" => 2,
         "region" => "content",
         "settings" => [
           "trim_length" => 200,
         ],
         "third_party_settings" => [],
-        "label" => "hidden",
+        "label" => "inline",
       ];
       $display->setComponent('body', $options);
     }
-  }  
+  }
 }
 
 /**

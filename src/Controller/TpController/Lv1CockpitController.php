@@ -42,19 +42,27 @@ class Lv1CockpitController extends ControllerBase {
    */
   public function render() {
     // Search all content created by the current user.
-    // return full entities.
+    // Return full entities.
     $contents = $this->entityTypeManager()
       ->getStorage('node')
       ->loadByProperties([
         'uid' => $this->currentUser()->id(),
       ]);
 
+    if (!$contents) {
+      // Create link.
+      $url = Url::fromRoute('node.add_page');
+      $label = $this->t('Create content');
+      $link = $this->linkGenerator->generate($label, $url);
+      return [
+        '#markup' => \sprintf("You don't have created any content. %s", $link),
+      ];
+    }
+
     // Loop on entities.
     $rows = [];
     foreach ($contents as $content) {
-      // Generate link.
-      // Prefer using Drupal\Core\Url rather than UrlGenerator service.
-      // @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21UrlGeneratorInterface.php/function/UrlGeneratorInterface%3A%3AgenerateFromRoute
+      // Create link.
       $url = Url::fromRoute('entity.node.edit_form', ['node' => $content->id()]);
       $label = $this->t('Modify');
       $link = $this->linkGenerator->generate($label, $url);
@@ -78,7 +86,7 @@ class Lv1CockpitController extends ControllerBase {
     $header = [
       $this->t('Content type'),
       $this->t('Title'),
-      $this->t('Crteated'),
+      $this->t('Created'),
       $this->t('Edit'),
     ];
 

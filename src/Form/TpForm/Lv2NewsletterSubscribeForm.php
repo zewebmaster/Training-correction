@@ -72,10 +72,12 @@ class Lv2NewsletterSubscribeForm extends FormBase {
     // Process current user.
     if (!$this->currentUser()->isAnonymous()) {
 
-      $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser()->id());
+      $user = $this->entityTypeManager
+        ->getStorage('user')
+        ->load($this->currentUser()->id());
 
-      if (!$account->get('field_newsletter')->isEmpty()) {
-        $field_newsletter = $account->get('field_newsletter')->first()->getValue();
+      if (!$user->get('field_newsletter')->isEmpty()) {
+        $field_newsletter = $user->get('field_newsletter')->first()->getValue();
         if ($field_newsletter['value']) {
           $this->messenger()->addStatus($this->t('You are already registred'));
 
@@ -97,8 +99,8 @@ class Lv2NewsletterSubscribeForm extends FormBase {
     ];
 
     if (!$this->currentUser()->isAnonymous()) {
-      $form['name']['#default_value'] = $account->getAccountName();
-      $form['mail']['#default_value'] = $account->getEmail();
+      $form['name']['#default_value'] = $user->getAccountName();
+      $form['mail']['#default_value'] = $user->getEmail();
     }
 
     $form['topic'] = [
@@ -176,9 +178,9 @@ class Lv2NewsletterSubscribeForm extends FormBase {
     ];
 
     if (!$this->currentUser()->isAnonymous()) {
-      $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser()->id());
-      $account->set('field_newsletter', ['value' => 1]);
-      $account->save();
+      $user = $this->entityTypeManager->getStorage('user')->load($this->currentUser()->id());
+      $user->set('field_newsletter', ['value' => 1]);
+      $user->save();
     }
 
     // Redirection.

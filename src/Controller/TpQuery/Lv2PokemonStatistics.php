@@ -43,8 +43,8 @@ class Lv2PokemonStatistics extends ControllerBase {
   private function countPokemonByGeneration() {
     return $this->entityTypeManager()->getStorage('node')
       ->getAggregateQuery()
-      ->conditionAggregate('nid', 'COUNT', '', '!=', 'en')
-      ->condition('status', 1, '=', 'en')
+      ->aggregate('nid', 'COUNT', 'en')
+  //  ->conditionAggregate('nid', 'COUNT', '', '!=', 'en')
       ->condition('type', 'pokemon', '=', 'en')
       ->groupBy('field_generation')
       ->execute();

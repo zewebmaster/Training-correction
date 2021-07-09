@@ -115,13 +115,14 @@ class Lv1RelatedContentBlock extends BlockBase implements ContainerFactoryPlugin
     if ($node->bundle() != 'article') {
       return;
     }
+
     if ($node->get('field_news')->isEmpty()) {
       // Process.
       return;
     }
 
     // Get the first news.
-    $field_new = $node->get('field_news')->first()->getValue();
+    $first_news = $node->get('field_news')->first()->getValue();
 
     // Get the bloc configuration.
     $config = $this->getConfiguration();
@@ -132,7 +133,7 @@ class Lv1RelatedContentBlock extends BlockBase implements ContainerFactoryPlugin
       ->getStorage('node')
       ->getQuery()
       ->condition('type', 'article', '=')
-      ->condition('field_news', $field_new['target_id'], '=')
+      ->condition('field_news', $first_news['target_id'], '=')
       ->condition('nid', $node->id(), '!=')
       ->sort('created')
       ->range(0, $range)
@@ -150,8 +151,7 @@ class Lv1RelatedContentBlock extends BlockBase implements ContainerFactoryPlugin
     // Manage link.
     $list = [];
     foreach ($articles as $article) {
-      // Prefer using Drupal\Core\Url rather than UrlGenerator service.
-      // @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Routing%21UrlGeneratorInterface.php/function/UrlGeneratorInterface%3A%3AgenerateFromRoute/8.4.x
+      // Create link.
       $label = $article->getTitle();
       $url = Url::fromRoute('entity.node.canonical', ['node' => $article->id()]);
       $list[] = $this->linkGenerator->generate($label, $url);

@@ -8,11 +8,11 @@ use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Correction for TP Cache - Level 2.
+ * Correction for TP Cache - Level 3.
  *
- * Class Lv2CacheableJsonResponseController.
+ * Class Lv3CacheableJsonResponseController.
  */
-class Lv2CacheableJsonResponseController extends ControllerBase {
+class Lv3CacheableJsonResponseController extends ControllerBase {
 
   /**
    * Return a json of all pokemon.

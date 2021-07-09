@@ -133,6 +133,7 @@ class Lv1GlobalStatistics extends ControllerBase {
     // Counts articles with database api dynamic query.
     $count_db = $this->database->select('node', 'n')
       ->condition('n.type', 'article', '=')
+      ->condition('n.langcode', 'en', '=')
       ->countQuery()
       ->execute()
       ->fetchField();
@@ -141,7 +142,7 @@ class Lv1GlobalStatistics extends ControllerBase {
     $count_eq = $this->entityTypeManager()
       ->getStorage('node')
       ->getQuery()
-      ->condition('type', 'article')
+      ->condition('type', 'article', '=', 'en')
       ->count()
       ->execute();
 
@@ -152,16 +153,20 @@ class Lv1GlobalStatistics extends ControllerBase {
    * Return count new articles.
    */
   private function countNewArticles() {
+    // It's a possibility !
     $month = [
       \strtotime(\date("Y-m-d", \time()) . 'first day of this month'),
       \strtotime(\date("Y-m-d", \time()) . 'last day of this month'),
     ];
+    // Another one.
+    $first_day_of_month = \strtotime(\date("Y-m-d", \time()) . 'first day of this month');
 
     return $this->entityTypeManager()
       ->getStorage('node')
       ->getQuery()
-      ->condition('type', 'article')
+      ->condition('type', 'article', '=', 'en')
       ->condition('created', $month, 'BETWEEN')
+      // ->condition('created', $first_day_of_month, '>')
       ->count()
       ->execute();
   }
@@ -172,7 +177,8 @@ class Lv1GlobalStatistics extends ControllerBase {
   private function countAuthors() {
     $query = $this->database->select('node_field_data', 'nfd')
       ->fields('nfd', ['uid'])
-      ->condition('nfd.type', 'article', '=');
+      ->condition('nfd.type', 'article', '=')
+      ->condition('nfd.langcode', 'en', '=');
 
     return $query->distinct()
       ->countQuery()
